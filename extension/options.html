@@ -1,0 +1,225 @@
+<html>
+<head>
+<title>Zen-Coding Textarea Extension Options</title>
+<meta charset="UTF-8">
+<link type="text/css" href="jquery/css/cupertino/jquery-ui-1.8.10.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="jquery/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="jquery/js/jquery-ui-1.8.10.custom.min.js"></script>
+<style>
+body {
+  font-family: 'Hiragino Kaku Gothic Pro W3','ヒラギノ角ゴ Pro W3','Verdana',sans-serif;
+  font-size: 100%;
+  line-height: 1.6;
+  color: #445;
+}
+h1,h2,p {
+  -webkit-margin-before: 0.4em;
+  -webkit-margin-after: 0.4em;
+}
+table {
+  font-size: 100%;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+  $('#tabs').tabs();
+  init();
+});
+
+function submit() {
+  saveSelect("lang");
+  saveSelect("locale");
+  saveSelect("indent");
+  saveTextBox();
+  var status = document.getElementById("status");
+  status.innerHTML = "Options Saved.";
+  setTimeout(function() {
+    status.innerHTML = "";
+  }, 2000);
+}
+
+function init(){
+  restoreSelect("lang");
+  restoreSelect("locale");
+  restoreSelect("indent");
+  restoreTextBox();
+}
+
+// Saves options to localStorage.
+function saveSelect(id) {
+  var val = document.getElementById(id);
+  var select = val.children[val.selectedIndex].value;
+  localStorage[id] = select;
+}
+
+function saveTextBox(){
+  var textBoxes = document.getElementsByTagName("input");
+  var shortcuts = new Array();
+  for(var i=0; i < textBoxes.length; i++){
+    var key = textBoxes[i].value;
+    var j=0;
+    if(key){
+      shortcuts.push({"key":key,"action":textBoxes[i].id});
+      console.log("shortcuts key:" + shortcuts[j].key + " action:" + shortcuts[j].action);
+      j++;
+    }
+  }
+  console.log("shortcuts:" + shortcuts.length);
+  console.log("shortcuts json:" + JSON.stringify({"shortcuts":shortcuts}));
+  localStorage["shortcuts_json"] = JSON.stringify({"shortcuts":shortcuts});
+}
+
+function restoreTextBox(){
+  var shortcuts_json = localStorage["shortcuts_json"];
+  var shortcuts = null;
+  if(!shortcuts_json) {
+    shortcuts = JSON.parse('{"shortcuts":[]}')["shortcuts"];
+  }else{
+    shortcuts = JSON.parse(shortcuts_json)["shortcuts"];
+  }
+  for(var i=0; i<shortcuts.length; i++){
+    var textBox = document.getElementById(shortcuts[i].action);
+    textBox.value = shortcuts[i].key;
+  }
+}
+
+// Restores select box state to saved value from localStorage.
+function restoreSelect(id) {
+  var val = localStorage[id];
+  if (!val) {
+    return;
+  }
+  var select = document.getElementById(id);
+  for (var i = 0; i < select.children.length; i++) {
+    var child = select.children[i];
+    if (child.value == val) {
+      child.selected = "true";
+      break;
+    }
+  }
+}
+</script>
+</head>
+
+<body>
+<h1>Zen-Coding Textarea Extension</h1>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#options">Options</a></li>
+    <li><a href="#history">history</a></li>
+    <li><a href="#author">Author</a></li>
+  </ul>
+  <div id="options">
+<section>
+<h2>Setting for HTML snippet.</h2>
+<table>
+  <tr>
+    <td>lang</td>
+    <td>
+      <select id="lang">
+        <option value="en">en</option>
+        <option value="ja">ja</option>
+        <option value="ja">zh</option>
+        <option value="ja">ru</option>
+        <option value="ja">pt</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>locale</td>
+    <td>
+      <select id="locale">
+        <option value="en_US">en_US</option>
+        <option value="ja_JP">ja_JP</option>
+        <option value="ja_JP">zh_CN</option>
+        <option value="ja_JP">zh_TW</option>
+        <option value="ja_JP">ru_RU</option>
+        <option value="ja_JP">pt_BR</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>indent</td>
+    <td>
+      <select id="indent">
+        <option value="\t">tab</option>
+        <option value="  ">space * 2</option>
+        <option value="    ">space * 4</option>
+      </select>
+    </td>
+  </tr>
+</table>
+</section>
+
+<section>
+<h2>Setting for Shortcuts.</h2>
+<p>
+Special Keys: ctrl , control , meta , shift , alt , enter , tab , left , right <br>
+Mac : 'meta' is ⌘(command).<br>
+Win : 'meta' is ctrl.<br>
+Example : Meta+Shift+Space
+</p>
+<table>
+  <tr><td>Expand Abbreviation</td><td><input style="width:200px;" id="Expand Abbreviation" placeholder="default Meta+E" type="text" /></td></tr>
+  <tr><td>Balance Tag Outward</td><td><input style="width:200px;" id="Balance Tag Outward" placeholder="default Meta+D" type="text" /></td></tr>
+  <tr><td>Balance Tag inward</td><td><input style="width:200px;" id="Balance Tag inward" placeholder="default Shift+Meta+D" type="text" /></td></tr>
+  <tr><td>Wrap with Abbreviation</td><td><input style="width:200px;" id="Wrap with Abbreviation" placeholder="default Shift+Meta+A" type="text" /></td></tr>
+  <tr><td>Next Edit Point</td><td><input style="width:200px;" id="Next Edit Point" placeholder="default Ctrl+Alt+RIGHT" type="text" /></td></tr>
+  <tr><td>Previous Edit Point</td><td><input style="width:200px;" id="Previous Edit Point" placeholder="default Ctrl+Alt+LEFT" type="text" /></td></tr>
+  <tr><td>Select Line</td><td><input style="width:200px;" id="Select Line" placeholder="default Meta+L" type="text" /></td></tr>
+  <tr><td>Merge Lines</td><td><input style="width:200px;" id="Merge Lines" placeholder="default Meta+Shift+M" type="text" /></td></tr>
+  <tr><td>Toggle Comment</td><td><input style="width:200px;" id="Toggle Comment" placeholder="default Meta+/" type="text" /></td></tr>
+  <tr><td>Split/Join Tag</td><td><input style="width:200px;" id="Split/Join Tag" placeholder="default Meta+J" type="text" /></td></tr>
+  <tr><td>Remove Tag</td><td><input style="width:200px;" id="Remove Tag" placeholder="default Meta+K" type="text" /></td></tr>
+  <tr><td>Insert Formatted Line Break</td><td><input style="width:200px;" id="Insert Formatted Line Break" placeholder="default Enter" type="text" /></td></tr>
+</table>
+</section>
+<button onclick="submit()">Save</button><span id="status"></span>
+</div>
+
+<div id="history">
+  <p>
+    <dt>2011/08/16</dt>
+    <dd>ちょっとしたtypoを修正</dd>
+  </p>  
+  <p>
+    <dt>2011/07/03</dt>
+    <dd>Powered By Zen-Coding の画像を表示しないように修正</dd>
+  </p>  
+  <p>
+    <dt>2011/05/24</dt>
+    <dd>Zen-Coding 0.7 で html:5 を展開すると lang に locale が入っていたのを修正</dd>
+  </p>  
+  <p>
+    <dt>2011/05/17</dt>
+    <dd>Zen-Coding 0.7 に対応</dd>
+    <dd>lang / locale をいくつか追加</dd>
+  </p>
+  <p>
+    <dt>2011/03/01</dt>
+    <dd>option page のスタイルをちょっと修正</dd>
+    <dd>background page に Google Analysticsを導入</dd>
+  </p>
+  <p>
+    <dt>2011/02/27</dt>
+    <dd>ロゴを修正</dd>
+    <dd>Optionページを修正</dd>
+  </p>
+  <p>
+    <dt>2011/02/14<dt>
+    <dd>複数のショートカットが保存されないバグを修正 / Zen Coding を Zen-Coding に修正</dd>
+  </p>
+  <p>
+    <dt>2011/02/12</dt>
+    <dd>一部スペルミスを修正</dd>
+  </p>
+  </div>
+  <div id="author">
+  <p>Chrome Web Store : <a href="https://chrome.google.com/webstore/detail/iodhcpffklplnfaihoolhfbejbinhcgn" target="_blank">Zen-Coding Textarea Extension</a></p>
+    <p>blog : <a href="http://d.hatena.ne.jp/j7400157/" target="_blank">techlog</a> ( Sorry, Japanese Only...)</p>
+    <p>twitter : <a href="http://twitter.com/sada_h" target="_blank">@sada_h</a></p>
+  </div>
+</div>
+</body>
+</html>
