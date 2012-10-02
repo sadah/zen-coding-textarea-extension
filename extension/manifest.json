@@ -1,12 +1,16 @@
 {
   "name": "Zen-Coding Textarea Extension",
-  "version": "0.7.1.2",
+  "version": "0.7.2",
   "description": "This extension is able to use the Zen-Coding for all textareas. This is using Zen-Coding Textarea plugin.",
+  "manifest_version": 2,
   "icons": { "36": "icon36.png",
              "48": "icon48.png",
             "128": "icon128.png" },
   "options_page":"options.html",
-  "background_page": "background.html",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'", 
   "content_scripts": [
     {
       "matches": ["http://*/*","https://*/*","file://*/*"],

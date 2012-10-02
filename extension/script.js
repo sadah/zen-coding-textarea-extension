@@ -1,6 +1,6 @@
 (function(){
   var option = null;
-  chrome.extension.sendRequest(null, function( response ){
+  chrome.extension.sendRequest("", function( response ){
     extensionOptions = response;
     main(extensionOptions);
   });
